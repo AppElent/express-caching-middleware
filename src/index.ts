@@ -3,9 +3,9 @@ type cacheMiddlewareOptions = {
 };
 
 // eslint-disable-next-line
-const cacheMiddleware = (cache, options: cacheMiddlewareOptions) => async (req, res, next) => {
+const cacheMiddleware = (cache, options?: cacheMiddlewareOptions) => async (req, res, next) => {
     let key = req.originalUrl || req.url;
-    if (options.userSpecific) key = req.uid + '_' + key;
+    if (options?.userSpecific) key = req.uid + '_' + key;
     const cachedata = await cache.get(key);
     if (cachedata) {
         return res.send(cachedata);
