@@ -1,14 +1,22 @@
-export class C {
-  private x = 10;
-  public getX = (): number => this.x;
-  public setX = (newVal: number): void => {
-    this.x = newVal;
-  };
-}
+type cacheMiddlewareOptions = {
+    userSpecific: boolean;
+};
 
-export const x = new C();
-export const y = { ...{ some: 'value' } };
+// eslint-disable-next-line
+const cacheMiddleware = (cache, options: cacheMiddlewareOptions) => async (req, res, next) => {
+    let key = req.originalUrl || req.url;
+    if (options.userSpecific) key = req.uid + '_' + key;
+    const cachedata = await cache.get(key);
+    if (cachedata) {
+        return res.send(cachedata);
+    } else {
+        res.sendResponse = res.send;
+        res.send = (body): void => {
+            cache.set(key, body);
+            res.sendResponse(body);
+        };
+        next();
+    }
+};
 
-export function sum(a: number, b: number): number {
-  return a + b;
-}
+export default cacheMiddleware;
