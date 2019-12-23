@@ -8,7 +8,7 @@ const cacheMiddleware = (cache, options?: cacheMiddlewareOptions) => async (req,
         options = {};
     }
     let key = req.originalUrl || req.url;
-    if (options?.userSpecific) key = req.uid + '_' + key;
+    if (options.userSpecific) key = req.uid + '_' + key;
     const cachedata = await cache.get(key);
     if (cachedata) {
         return res.send(cachedata);
